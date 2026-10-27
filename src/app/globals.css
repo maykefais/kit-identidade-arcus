@@ -1,0 +1,445 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+/* Celular ou tela de toque (mesma regra dos 44px no fim do arquivo), para ajustes pontuais: `toque:min-h-11`. */
+@custom-variant toque {
+  @media (pointer: coarse), (max-width: 639.98px) {
+    @slot;
+  }
+}
+
+/* Sombras e cores fixas do brand book (as cores de tela ficam nos tokens semânticos abaixo). */
+@theme {
+  /* Visual novo (entrega 4): sombras difusas, sem borda, para os cartões "flutuarem" no fundo quase branco. */
+  --shadow-xs: 0 1px 2px rgb(27 23 53 / 0.04);
+  --shadow-sm: 0 1px 2px rgb(27 23 53 / 0.04), 0 8px 24px -6px rgb(27 23 53 / 0.08);
+  --shadow-md: 0 2px 6px rgb(27 23 53 / 0.04), 0 16px 40px -8px rgb(27 23 53 / 0.12);
+  --shadow-lg: 0 24px 64px -16px rgb(27 23 53 / 0.22);
+  --color-navy: #28233F;
+  --color-ink: #1B1735;
+  --color-cream: #FAF0D9;
+  --color-flame: #EE4B25;
+  --color-ambar: #D2A767;
+  /* Escala de texto cerca de 12% menor que a padrão do Tailwind (piso 10,5 px). */
+  --text-xs: 0.6875rem;
+  --text-xs--line-height: 1.3333;
+  --text-sm: 0.78125rem;
+  --text-sm--line-height: 1.4286;
+  --text-base: 0.875rem;
+  --text-base--line-height: 1.5;
+  --text-lg: 1rem;
+  --text-lg--line-height: 1.5556;
+  --text-xl: 1.125rem;
+  --text-xl--line-height: 1.4;
+  --text-2xl: 1.375rem;
+  --text-2xl--line-height: 1.3333;
+  --text-3xl: 1.75rem;
+  --text-3xl--line-height: 1.2;
+  --text-4xl: 2.125rem;
+  --text-4xl--line-height: 1.1111;
+  --text-5xl: 2.75rem;
+  --text-5xl--line-height: 1;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  /* Inter em tudo (trocar a fonte = mudar esta linha e o layout); font-display é só um apelido de --font-sans. */
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-heading: var(--font-sans);
+  --font-display: var(--font-sans);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-sucesso: var(--sucesso);
+  --color-alerta: var(--alerta);
+  --color-selo-ok: var(--selo-ok);
+  --color-selo-atencao: var(--selo-atencao);
+  --color-selo-atencao-texto: var(--selo-atencao-texto);
+  --color-trilho: var(--trilho);
+  --color-icone-menu: var(--icone-menu);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-primary-destaque: var(--primary-destaque);
+  --color-primary-texto: var(--primary-texto);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: 1rem;
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+/* Identidade Arcus (brand book: brand-book-sigma.vercel.app, colors_and_type.css).
+   Vidro (redesenho de 22/10/2026): fundo em gradiente com brilhos flame e lilás, cartões translúcidos; flame é a ação
+   principal e a escolha ativa (docs/design.md).
+   Verde de sucesso e vermelho de erro não existem na marca: são cores de estado. */
+:root {
+  --background: #F6F1E6; /* cream suave: base do vidro claro */
+  --fundo-app: radial-gradient(600px 400px at 100% 0%, rgb(238 75 37 / 0.16), transparent 60%),
+    radial-gradient(600px 500px at 0% 100%, rgb(91 80 180 / 0.16), transparent 60%), #F6F1E6;
+  --foreground: #1B1735; /* ink */
+  --card: rgb(255 255 255 / 0.6); /* vidro: translúcido (popover abaixo continua opaco, para menus) */
+  --vidro-fundo: rgb(255 255 255 / 0.6);
+  --borda-vidro: rgb(255 255 255 / 0.9);
+  --brilho-vidro: inset 0 1px 0 #fff;
+  --sombra-vidro: 0 6px 18px rgb(40 35 63 / 0.05);
+  --sombra-controle: inset 0 1px 0 #fff, 0 4px 14px rgb(40 35 63 / 0.06); /* campos e botões de vidro */
+  --trilho: rgb(255 255 255 / 0.5); /* trilho do seletor segmentado */
+  --card-foreground: #1B1735;
+  --popover: #FFFFFF;
+  --popover-foreground: #1B1735;
+  --primary: #D63F1A; /* flame escurecido: branco sobre ele dá 4,58:1 (sobre #EE4B25 puro, só 3,7:1) */
+  --primary-foreground: #FFFFFF;
+  --primary-destaque: #BF3615; /* hover opaco */
+  --primary-texto: #B8320F; /* flame como texto (link): 5,0:1 no fundo */
+  --secondary: #EFEDE8; /* item ativo da barra inferior, selo neutro e tecla do atalho */
+  --secondary-foreground: #28233F;
+  --muted: #EFEDE8;
+  --muted-foreground: #625C78; /* ink-3 escurecido: 5,9:1 no branco, 5,1:1 no muted */
+  --accent: #E3E7F7; /* lilás claro: botão tonal (aprovar), selo "em espera", avatar, ícone e blocos de aviso */
+  --accent-foreground: #28233F;
+  --destructive: #B42318;
+  --sucesso: #2A7449;
+  --alerta: #A0763C; /* âmbar escuro: 4:1 no papel, para ícone e barra */
+  /* Selos de situação: ok (texto --sucesso), espera (--accent), atenção (âmbar); alerta é o --destructive. */
+  --selo-ok: #DFF0E5;
+  --selo-atencao: #F6ECD9;
+  --selo-atencao-texto: #7A5212;
+  --border: #E8E5DE;
+  --input: #8C869A; /* contorno de campo e controle: 3,1:1 no vidro sobre o brilho flame e no fundo */
+  --ring: #D63F1A;
+  /* Séries de gráfico validadas para daltonismo (skill dataviz): só 2; referência em tracejado neutro. */
+  --chart-1: #5566A6; /* azul periwinkle (navy é escuro demais para dado) */
+  --chart-2: #EE4B25; /* flame */
+  /* Barras contra meta (cor pelo momento) sobre um trilho opaco: >= 3:1 contra ele, com ou sem o brilho atrás. */
+  --trilho-barra: #E0DBD4;
+  --barra-vermelho: #B42318; /* abaixo de 50% da meta */
+  --barra-amarelo: #A16207; /* atrás do esperado: âmbar escuro, que não se confunde com o flame (o #B45309 lia como laranja) */
+  --barra-azul: #2563EB; /* no esperado ou acima: azul de verdade, diferente do --chart-1 das barras sem meta */
+  --barra-verde: #2A7449; /* meta batida */
+  /* Barra sem meta (ranking, bônus): gradiente da marca lilás → flame; a ponta flame é a escurecida (o puro dá 2,7:1). */
+  --barra-neutra-de: #5A4FB4;
+  --barra-neutra-ate: #D63F1A;
+  --forca-hachura: 100%;
+  --radius: 0.625rem;
+  --sidebar: #FAF6EF; /* branco .45 sobre o cream, opaco */
+  --sidebar-foreground: #4A4560;
+  --sidebar-accent: #FFFFFF; /* item ativo e passar o mouse */
+  --sidebar-accent-foreground: #28233F;
+  --sidebar-border: #EFEDE8;
+  --sidebar-ring: #28233F;
+  /* Quadradinho do ícone no menu: translúcido; no item ativo, gradiente flame com ícone branco. */
+  --icone-menu: rgb(255 255 255 / 0.8);
+  --icone-menu-ativo: linear-gradient(135deg, #EE4B25, #f8663a); /* ponta clara do esboço (#ff7a4d) escurecida: branco ≥ 3:1 em todo o gradiente */
+}
+
+/* Escuro: textura Indigo da marca (fundo escuro, texto creme; flame na ação principal e na escolha ativa). */
+.dark {
+  --background: #1B1735;
+  --fundo-app: radial-gradient(600px 400px at 100% 0%, rgb(238 75 37 / 0.3), transparent 60%),
+    radial-gradient(600px 500px at 0% 100%, rgb(91 80 180 / 0.4), transparent 60%),
+    linear-gradient(160deg, #1B1735, #0f0d22 60%);
+  --foreground: #FAF0D9;
+  --card: rgb(255 255 255 / 0.065); /* vidro: média do gradiente de .10 a .03 (popover abaixo continua opaco) */
+  --vidro-fundo: linear-gradient(135deg, rgb(255 255 255 / 0.1), rgb(255 255 255 / 0.03));
+  --borda-vidro: rgb(255 255 255 / 0.12);
+  --brilho-vidro: inset 0 1px 0 rgb(255 255 255 / 0.16);
+  --sombra-vidro: 0 8px 24px rgb(0 0 0 / 0.25);
+  --sombra-controle: inset 0 1px 0 rgb(255 255 255 / 0.08);
+  --trilho: rgb(255 255 255 / 0.07);
+  --card-foreground: #FAF0D9;
+  --popover: #28233F;
+  --popover-foreground: #FAF0D9;
+  --primary: #D63F1A; /* igual ao claro: flame escurecido, branco sobre ele dá 4,58:1 */
+  --primary-foreground: #FFFFFF;
+  --primary-destaque: #BF3615;
+  --primary-texto: #FFA98F; /* flame claro como texto no escuro */
+  --secondary: #3A3460;
+  --secondary-foreground: #FAF0D9;
+  --muted: #3A3460;
+  --muted-foreground: #D6CDBE;
+  --accent: #352E68; /* lilás do esboço (rgba(124,108,240,.22) no vidro), opaco */
+  --accent-foreground: #C4BCFF;
+  --destructive: #FFA39B;
+  --sucesso: #86E0A9;
+  --alerta: #D2A767;
+  --selo-ok: #223540; /* verde .15 no fundo */
+  --selo-atencao: #382E3D; /* âmbar .16 no fundo */
+  --selo-atencao-texto: #E8C48A;
+  --border: #4A4470;
+  --input: #968EBF; /* contorno de campo e controle: 3,06:1 no vidro sobre o brilho flame */
+  --ring: #EE4B25;
+  --chart-1: #788AD2; /* periwinkle ajustado ao fundo escuro */
+  --chart-2: #EB4821; /* flame ajustado ao fundo escuro */
+  --trilho-barra: #312D45;
+  --barra-vermelho: #F43F5E;
+  --barra-amarelo: #FBBF24;
+  --barra-azul: #60A5FA;
+  --barra-verde: #4ADE80;
+  --barra-neutra-de: #7C6CF0;
+  --barra-neutra-ate: #EE4B25;
+  --forca-hachura: 55%; /* listras mais leves no escuro */
+  --sidebar: #1B1735;
+  --sidebar-foreground: #D9D2C3;
+  --sidebar-accent: #322E49; /* branco .1 sobre o fundo, opaco */
+  --sidebar-accent-foreground: #FAF0D9;
+  --sidebar-border: #2E2950;
+  --sidebar-ring: #FAF0D9; /* foco na cor do texto: aparece ao lado do flame do "Novo" e do ícone ativo */
+  --icone-menu: rgb(255 255 255 / 0.07);
+}
+
+/* Trecho projetado da barra contra meta: listras na cor da barra (--cor-barra, posto pela BarraMeta). */
+@utility hachura {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    color-mix(in srgb, var(--cor-barra) var(--forca-hachura), transparent) 0 3px,
+    transparent 3px 7px
+  );
+}
+
+/* Vidro: o desfoque só de md para cima (no celular, só o fundo translúcido, para pesar menos). */
+@utility vidro {
+  background: var(--vidro-fundo);
+  border: 1px solid var(--borda-vidro);
+  box-shadow: var(--brilho-vidro), var(--sombra-vidro);
+  @media (min-width: 48rem) {
+    backdrop-filter: blur(24px) saturate(140%);
+  }
+}
+
+/* Valor de ganho escondido (Ganho, segurar para ver): desfoque proporcional à letra (28px → ~8px, 12,5px → ~4px) e na
+   cor do texto, para a mancha do texto pequeno (muted) continuar visível. */
+@utility borrado {
+  filter: blur(0.3em);
+  color: var(--foreground);
+  user-select: none;
+}
+/* Alvo de toque longo (segurar para ver): sem o menu de copiar/compartilhar do iPhone. */
+@utility sem-menu-toque {
+  -webkit-touch-callout: none;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    background: var(--fundo-app); /* sem fixed (caro no iOS): no app, os brilhos fixos são a camada do miolo abaixo */
+  }
+  html {
+    @apply font-sans;
+    background-color: var(--background); /* abaixo do menu e na rolagem elástica */
+  }
+  /* O miolo do app tem fundo opaco e o menu cobre o canto esquerdo: os brilhos vão numa camada fixa só na área
+     ao lado do menu, atrás do conteúdo (isolate: o -z-1 fica acima do fundo do miolo). */
+  [data-slot="sidebar-inset"] {
+    isolation: isolate;
+  }
+  [data-slot="sidebar-inset"]::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: var(--fundo-app);
+  }
+  @media (min-width: 48rem) {
+    .peer[data-state="expanded"] ~ [data-slot="sidebar-inset"]::before {
+      left: var(--sidebar-width);
+    }
+    .peer[data-state="collapsed"] ~ [data-slot="sidebar-inset"]::before {
+      left: var(--sidebar-width-icon);
+    }
+  }
+}
+/* Barras e anéis crescem ao aparecer (só para quem não pediu menos movimento). */
+@keyframes crescer-x {
+  from {
+    transform: scaleX(0);
+  }
+}
+@keyframes desenhar-anel {
+  from {
+    stroke-dashoffset: var(--anel-total);
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .animar-crescer {
+    transform-origin: left;
+    animation: crescer-x 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .animar-anel {
+    animation: desenhar-anel 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  /* Botão Atualizar (atualizar.tsx): cartões pulsam enquanto atualiza; com o dado novo, sobem em sequência (--ordem) e
+     os minigráficos se redesenham da esquerda para a direita. */
+  :root[data-atualizando] #conteudo [data-slot="card"] {
+    animation: pulsar-cartao 1.2s ease-in-out infinite;
+  }
+  :root[data-revelar] #conteudo [data-slot="card"] {
+    animation: subir-cartao 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) calc(var(--ordem, 0) * 40ms) both;
+  }
+  :root[data-revelar] #conteudo [data-slot="chart"] {
+    animation: revelar-x 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) 0.2s both;
+  }
+  /* Em qualquer tela (tabelas, listas, formulários): os blocos do conteúdo reaparecem em sequência. */
+  :root[data-revelar] #conteudo > * {
+    animation: aparecer 0.35s ease-out calc(var(--ordem-bloco, 0) * 50ms) both;
+  }
+  :root[data-atualizando] header[data-cromo]::after {
+    animation: barra-carregando 1s ease-in-out infinite;
+  }
+}
+/* Barra fina sob o topo enquanto o Atualizar trabalha (parada para quem pediu menos movimento). O topo corta a sobra só
+   na horizontal (os menus do topo abrem em portal, fora dele). */
+:root[data-atualizando] header[data-cromo] {
+  overflow-x: clip;
+}
+:root[data-atualizando] header[data-cromo]::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 35%;
+  height: 2px;
+  border-radius: 9999px;
+  background: var(--primary);
+  pointer-events: none;
+}
+@keyframes barra-carregando {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(290%);
+  }
+}
+@keyframes aparecer {
+  from {
+    opacity: 0.35;
+  }
+}
+@keyframes pulsar-cartao {
+  50% {
+    opacity: 0.6;
+  }
+}
+@keyframes subir-cartao {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+@keyframes revelar-x {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+}
+
+/* Celular primeiro (CLAUDE.md, Interface): no toque ou abaixo de 640px, todo controle tem 44px de alvo
+   e todo campo tem 16px (o iPhone não dá zoom ao focar). Fora de @layer de propósito: vale sobre os
+   utilitários (h-8, md:text-sm) sem mexer em cada componente, inclusive nos que vierem depois.
+   `data-controle` marca o Button mesmo quando um gatilho (asChild) troca o data-slot dele. */
+@media (pointer: coarse), (max-width: 639.98px) {
+  [data-controle],
+  [data-slot="button"],
+  [data-slot="select-trigger"],
+  [data-slot="select-item"],
+  [data-slot="dropdown-menu-item"],
+  [data-slot="dropdown-menu-radio-item"],
+  [data-slot="dropdown-menu-checkbox-item"],
+  [data-slot="tabs-trigger"],
+  [data-slot="toggle"],
+  [data-slot="toggle-group-item"],
+  [data-slot="sidebar-menu-button"],
+  [data-slot="input"] {
+    min-height: 44px;
+  }
+  [data-controle],
+  [data-slot="toggle"],
+  [data-slot="toggle-group-item"] {
+    min-width: 44px;
+  }
+  [data-slot="tabs-list"] {
+    height: auto;
+  }
+  input,
+  textarea,
+  select,
+  [data-slot="select-trigger"] {
+    font-size: 16px;
+  }
+}
+
+/* Safari do iPhone (lote 2, ponto 4): o seletor nativo de data e hora tem largura mínima própria e passava da borda do
+   cartão ("Pago em", "Próximo contato"). Sem a aparência nativa ele obedece à largura do campo; o seletor continua
+   abrindo no toque. Só no iOS (`-webkit-touch-callout`): no computador o campo nativo fica como está. */
+@supports (-webkit-touch-callout: none) {
+  input:is([type="date"], [type="time"], [type="datetime-local"], [type="month"]) {
+    -webkit-appearance: none;
+    appearance: none;
+    display: block;
+    width: 100%;
+    min-width: 0;
+  }
+  input::-webkit-date-and-time-value {
+    text-align: start;
+  }
+}
+
+/* Modo TV (`/?tv=1`): só o painel na tela, sem menu lateral, topo, barra inferior nem "+" (`data-cromo`); a partir de
+   md, letra maior para ler de longe. Fora de @layer: vale sobre os utilitários e o recorte dos brilhos ao lado do menu. */
+:root:has([data-modo-tv]) {
+  [data-slot="sidebar"],
+  [data-cromo] {
+    display: none;
+  }
+  [data-slot="sidebar-inset"]::before {
+    left: 0;
+  }
+  /* Largura toda e sem a folga da barra inferior; a primeira tela cabe em 1920 × 1080. */
+  #conteudo {
+    max-width: none;
+    padding-block: 1.5rem;
+  }
+  @media (min-width: 48rem) {
+    font-size: 125%;
+  }
+}
+/* Duas telas que se alternam (TelasModoTv): só o grupo da tela à vista. */
+[data-modo-tv][data-tela="1"] [data-tela-tv="2"],
+[data-modo-tv][data-tela="2"] [data-tela-tv="1"] {
+  display: none;
+}
+/* Gráfico lido a 2–3 m: linhas mais grossas e o tracejado da meta mais aberto. */
+[data-modo-tv] .recharts-line-curve {
+  stroke-width: 2.5px;
+}
+[data-modo-tv] .recharts-line-curve[stroke-dasharray] {
+  stroke-dasharray: 7 5;
+}
